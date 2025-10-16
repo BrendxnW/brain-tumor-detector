@@ -1,2 +1,4 @@
 torch
-numpy
+pandas
+flask
+ydata_profiling
