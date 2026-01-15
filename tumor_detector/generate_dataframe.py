@@ -1,7 +1,7 @@
 import os
 import pandas as pd
 
-SEARCH_ROOT_DIR = "data"
+SEARCH_ROOT_DIR = "data/Testing"
 
 
 def find_jpg_files() -> list[str]:
