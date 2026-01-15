@@ -25,7 +25,7 @@ class CustomImageDataset(Dataset):
     def __len__(self) -> int:
         return len(self.img_labels)
 
-    def __getitem__(self, idx: int) -> tuple[Tensor, Any]:
+    def __getitem__(self, idx: int):
         img_path = os.path.join(self.img_dir, self.img_labels.iloc[idx, 0])
         image = decode_image(img_path)
         label = self.img_labels.iloc[idx, 1]
@@ -37,7 +37,7 @@ class CustomImageDataset(Dataset):
 
 
 if __name__ == "__main__":
-    dataset = CustomImageDataset("annotations.csv", ".")
+    dataset = CustomImageDataset("training_annotations.csv", ".")
     print(dataset[0])
     print(dataset[1])
 
