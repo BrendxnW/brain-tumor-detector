@@ -1,5 +1,7 @@
 torch
+torchvision
 pandas
 flask
 scikit-learn
 ydata_profiling
+kagglehub
