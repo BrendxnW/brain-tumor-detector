@@ -1,10 +1,11 @@
 import torch
-import os
-import pandas as pd
+import random
+import matplotlib.pyplot as plt
+
 from torch.utils.data import DataLoader
+from torchvision.datasets import ImageFolder
 from torchvision import transforms
-from torch.nn.utils.rnn import pad_sequence
-from tumor_detector.src.dataset.brain_tumor_dataset import BrainTumorDataset
+from src.dataset.brain_tumor_dataset import BrainTumorDataset
 
 
 def get_data_loaders(batch_size=64, num_workers=2):
@@ -23,16 +24,16 @@ def get_data_loaders(batch_size=64, num_workers=2):
         transforms.ToTensor()
     ])
 
-    training_data = BrainTumorDataset(
-        root_dir="tumor_detector/Data/Training/",
+    training_data = ImageFolder(
+        root_dir="Data/Training/",
         train = True,
         transform=transform,
         batch_size=batch_size,
         num_workers=num_workers
     )
 
-    test_data = BrainTumorDataset(
-        root_dir="tumor_detector/Data/Testing/",
+    test_data = ImageFolder(
+        root_dir="Data/Testing/",
         train = False,
         transform=transform,
         batch_size=batch_size,
@@ -51,7 +52,16 @@ def get_data_loaders(batch_size=64, num_workers=2):
                                  num_workers=num_workers
     )
 
+    idx = random.randint(0, len(training_data) - 1)
+    img, label = training_data[idx]
 
-
+    plt.imshow(img.permute(1, 2, 0))
+    plt.title(training_data.classes[label])
+    plt.axis("off")
+    plt.show()
 
     return train_dataloader, test_dataloader
+
+
+if __name__ == "__main__":
+    get_data_loaders()
