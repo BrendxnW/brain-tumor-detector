@@ -19,7 +19,11 @@ def get_data_loaders(batch_size=64, num_workers=2):
 
     """
     transform = transforms.Compose([
-        transforms.Resize((224, 224)),
+        transforms.RandomResizedCrop(224, scale=(0.8, 1.0)),
+        transforms.RandomHorizontalFlip(p=0.5),
+        transforms.RandomRotation(5),
+        transforms.GaussianBlur(3,  sigma=(0.1, 1.0)),
+        transforms.ColorJitter(brightness=0.05, contrast=0.05),
         transforms.ToTensor()
     ])
 

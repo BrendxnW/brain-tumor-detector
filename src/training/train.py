@@ -70,20 +70,20 @@ def evaluate(model, loader, lf, device):
 
 
 def main():
-    MODEL = "src/checkpoint/model_2.pt"
-    LEARNING_CURVE = "src/learning_curves/v_2"
+    MODEL = "src/checkpoint/model_4_retrain.pt"
+    LEARNING_CURVE = "src/learning_curves/v_4"
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(f"Using: {device}")
 
     best_loss = float("inf")
-    num_epochs = 25
+    num_epochs = 8
 
-    resnet_model = models.resnet50(weights="IMAGENET1K_V1")
+    resnet_model = models.resnet18(weights="IMAGENET1K_V1")
     resnet_model.fc = nn.Linear(resnet_model.fc.in_features, 4)
     resnet_model = resnet_model.to(device)
 
-    optimizer = optim.Adam(resnet_model.parameters(), lr=1e-5)
+    optimizer = optim.Adam(resnet_model.parameters(), lr=1e-5, weight_decay=1e-4)
     loss_function =nn.CrossEntropyLoss()
 
     train_dataloader, test_dataloader = get_data_loaders()
@@ -104,6 +104,8 @@ def main():
         
         train_losses.append(trained_loss)
         test_losses.append(tested_loss)
+
+        scheduler.step(tested_loss)
         
         if tested_loss < best_loss:
             best_loss = tested_loss
@@ -114,7 +116,7 @@ def main():
     "train_loss": train_losses,
     "test_loss": test_losses,
     })
-    metrics.to_csv(LEARNING_CURVE, index=False)
+    metrics.to_csv("src/learning_curves/v_4/learning_curve.csv", index=False)
 
     plt.figure()
     plt.plot(metrics["epoch"], metrics["train_loss"], label="Train Loss")
@@ -124,7 +126,7 @@ def main():
     plt.title("Learning Curve")
     plt.legend()
     plt.grid(True)
-    plt.savefig(LEARNING_CURVE, dpi=200)
+    plt.savefig("src/learning_curves/v_4/loss_curve", dpi=200)
     plt.show()
 
 if __name__ == "__main__":
