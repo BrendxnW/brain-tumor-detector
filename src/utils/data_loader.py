@@ -1,19 +1,17 @@
 import torch
-import random
-import matplotlib.pyplot as plt
 
-from torch.utils.data import DataLoader
+from torch.utils.data import DataLoader, ConcatDataset
 from torchvision.datasets import ImageFolder
 from torchvision import transforms
 
 
-def get_data_loaders(batch_size=64, num_workers=2):
+def get_data_loaders(batch_size=128, num_workers=2):
     """
     Preprocesses data and creates data loaders for our datasets.
 
     Args:
-        batch_size (int): Number of samples per batch, defaults to 64.
-        num_workers (int): Number of subprocesses used for data loading, defaults to 2.
+        batch_size (int): Number of samples per batch.
+        num_workers (int): Number of subprocesses used for data loading.
 
     Returns:
 
@@ -28,22 +26,35 @@ def get_data_loaders(batch_size=64, num_workers=2):
     ])
 
     training_data = ImageFolder(
-        root="Data/Training/",
+        root="data/dataset_1/Training/",
         transform=transform
     )
 
     test_data = ImageFolder(
-        root="Data/Testing/",
+        root="data/dataset_1/Testing/",
         transform=transform
     )
 
-    train_dataloader = DataLoader(training_data,
+    training_data2 = ImageFolder(
+        root="data/dataset_2/Train/",
+        transform=transform
+    )
+
+    test_data2 = ImageFolder(
+        root="data/dataset_2/Test/",
+        transform=transform
+    )
+
+    big_train = ConcatDataset([training_data, training_data2])
+    big_test = ConcatDataset([test_data, test_data2])
+
+    train_dataloader = DataLoader(big_train,
                                   batch_size=batch_size,
                                   shuffle=True,
                                   num_workers=num_workers
     )
     
-    test_dataloader = DataLoader(test_data,
+    test_dataloader = DataLoader(big_test,
                                  batch_size=batch_size,
                                  shuffle=False,
                                  num_workers=num_workers
