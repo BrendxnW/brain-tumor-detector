@@ -2,6 +2,7 @@ import torch
 import torchvision.models as models
 import argparse
 import torch.nn as nn
+import torch.nn.functional as F
 
 
 from PIL import Image
@@ -39,13 +40,25 @@ def load_img(path):
 
 
 def predict(model, image):
+    threshold = 0.85
+
     with torch.no_grad():
         output = model(image)
 
-    pred = torch.argmax(output, dim=1)
-    tumor_type = tumor_types[pred.item()]
-    return tumor_type
+    probability = F.softmax(output, dim=1)
+    confidence, pred = torch.max(probability, dim=1)
 
+    tumor_type = tumor_types[pred.item()]
+    confidence_score = confidence.item()
+
+    if 0.75 < confidence_score <= threshold:
+        return "Review Recommended", confidence_score, tumor_type
+    
+    elif confidence_score > threshold:
+        return "Confident", confidence_score, tumor_type
+    
+    else:
+        return "Uncertain NEEDS Review", confidence_score, tumor_type
 
 def main():
     parser = argparse.ArgumentParser()
@@ -60,10 +73,10 @@ def main():
 
     image = load_img(args.image)
 
-    predict_tumor = predict(model, image)
+    status, confidence_score, predict_tumor = predict(model, image)
 
     print(f"Image: {args.image}")
-    print(f"Type of Tumor: {predict_tumor}")
+    print(f"\033[31mStatus: {status}\033[0m | Type of Tumor: {predict_tumor} | Probability: {confidence_score:.4f}%")
 
 if __name__ == "__main__":
     main()
