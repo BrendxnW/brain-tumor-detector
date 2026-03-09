@@ -8,11 +8,6 @@ from PIL import Image
 from torchvision import transforms
 
 
-parser = argparse.ArgumentParser()
-parser.add_argument("--image", type=str)
-args = parser.parse_args()
-
-
 best_model = "checkpoint/model_4_retrain.pt"
 
 tumor_types = {
@@ -53,6 +48,10 @@ def predict(model, image):
 
 
 def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--image", type=str)
+    args = parser.parse_args()
+
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     
 
