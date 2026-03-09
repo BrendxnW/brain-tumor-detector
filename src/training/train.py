@@ -70,7 +70,7 @@ def evaluate(model, loader, lf, device):
 
 
 def main():
-    MODEL = "checkpoint/model_4_retrain.pt"
+    MODEL = "checkpoint/model_5_retrain.pt"
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(f"Using: {device}")

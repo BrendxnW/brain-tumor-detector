@@ -16,7 +16,7 @@ def get_data_loaders(batch_size=128, num_workers=2):
     Returns:
 
     """
-    transform = transforms.Compose([
+    train_transform = transforms.Compose([
         transforms.RandomResizedCrop(224, scale=(0.8, 1.0)),
         transforms.RandomHorizontalFlip(p=0.5),
         transforms.RandomRotation(5),
@@ -25,24 +25,29 @@ def get_data_loaders(batch_size=128, num_workers=2):
         transforms.ToTensor()
     ])
 
+    test_transform = transforms.Compose([
+        transforms.Resize((224,224)),
+        transforms.ToTensor()
+    ])
+
     training_data = ImageFolder(
         root="data/dataset_1/Training/",
-        transform=transform
+        transform=train_transform
     )
 
     test_data = ImageFolder(
         root="data/dataset_1/Testing/",
-        transform=transform
+        transform=test_transform
     )
 
     training_data2 = ImageFolder(
         root="data/dataset_2/Train/",
-        transform=transform
+        transform=train_transform
     )
 
     test_data2 = ImageFolder(
         root="data/dataset_2/Test/",
-        transform=transform
+        transform=test_transform
     )
 
     big_train = ConcatDataset([training_data, training_data2])
